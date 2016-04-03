@@ -1,3 +1,9 @@
 body {
   background-color: black;
 }
+
+#gamearea {
+  margin: auto;
+  border: solid white;
+  margin-top: 40px;
+}
