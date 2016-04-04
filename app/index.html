@@ -1,12 +1,32 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" type="text/css" href="/assets/stylesheets/normalize.css">
+  <link rel="stylesheet" type="text/css" href="/assets/stylesheets/skeleton.css">
   <link rel="stylesheet" type="text/css" href="/assets/stylesheets/style.css">
   <title> Pass the Puck</title>
 </head>
 <body>
-  <div id="gamearea"></div>
-  <script type="text/javascript" src="/lib/crafty-min.js"></script>
-  <script type="text/javascript" src="/src/app.js"></script>
+  <div class="container">
+    <div class="row center">
+      <h5>Create or Join an existing game.</h5>
+    </div>
+    <div class="row">
+      <div class="six columns">
+        <p> Create game</p>
+        <label for="game_name">Name</label>
+        <input class="u-full-width" type="text" id="game_name">
+        <button class="button-primary">Create Game</button>
+      </div>
+      <div class="six columns left-bordered" id="join-parent">
+        <p> Join game </p>
+        <div id="join-area"></div>
+      </div>
+    </div>
+  </div>
+  <script src="https://code.jquery.com/jquery-2.2.2.min.js"></script>
+  <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+  <script type="text/javascript" src="/src/landing.js"></script>
 </body>
 </html>
