@@ -39,6 +39,11 @@
           console.log('No such game. Id: ', id);
         }
       };
+
+      gms.vm.clear = function() {
+        gms.vm.list = gms.GamesList();
+        gms.vm.ids = Array();
+      };
     }
   };
 
@@ -70,6 +75,7 @@
 
   var socket = io.connect('/');
   socket.on('game update', function(data) {
+    gms.vm.clear();
     if (data.games.length > 0) {
       for (var i = 0; i < data.games.length; i++) {
         gms.vm.add(data.games[i]._id, data.games[i].name, data.games[i].players);
@@ -77,5 +83,15 @@
     }
     gms.render();
   });
+
+  window.createGame = function() {
+    var game_name = document.getElementById('game_name');
+    if (game_name.value.length == 0) {
+      alert('A name is required!');
+      return;
+    } else {
+      socket.emit('new game', {name: game_name.value});
+    }
+  };
 
 })();

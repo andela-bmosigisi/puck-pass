@@ -6,7 +6,6 @@ var Schema = mongoose.Schema;
 
 var gameSchema = new Schema({
   name: { type: String, required: true },
-  password: String,
   players: Number,
   open: Boolean
 });
