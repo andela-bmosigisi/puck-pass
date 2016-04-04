@@ -6,6 +6,9 @@ var bodyParser = require('body-parser');
 
 var app = express();
 
+require('dotenv').config();
+require('./models/db');
+
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));

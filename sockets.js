@@ -1,12 +1,19 @@
+var mongoose = require('mongoose');
+var Game = mongoose.model('Game');
+
 module.exports = function(io) {
 
   var sockets = {};
 
   sockets.init = function() {
     io.on('connection', function (socket) {
-      socket.emit('news', { hello: 'world' });
-      socket.on('my other event', function (data) {
-        console.log(data);
+      Game.find({open: true}, function(err, docs) {
+        if (err) {
+          console.log('Mongoose error: ', err);
+          socket.emit('game update', {games : []});
+        } else {
+          socket.emit('game update', {games: docs});
+        }
       });
     });
   };

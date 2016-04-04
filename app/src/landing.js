@@ -68,10 +68,14 @@
     joinParent.innerHTML += gms.view();
   };
 
-  var socket = io.connect('http://localhost:3000');
-  socket.on('news', function (data) {
-    console.log(data);
-    socket.emit('my other event', { my: 'data' });
+  var socket = io.connect('/');
+  socket.on('game update', function(data) {
+    if (data.games.length > 0) {
+      for (var i = 0; i < data.games.length; i++) {
+        gms.vm.add(data.games[i]._id, data.games[i].name, data.games[i].players);
+      }
+    }
+    gms.render();
   });
 
 })();
