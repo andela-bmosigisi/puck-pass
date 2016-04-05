@@ -8,8 +8,11 @@ module.exports = function(io) {
   sockets.init = function() {
     io.on('connection', function (socket) {
       updateGames();
-      socket.on('new game', function(data, socket) {
-        addGame(data);
+      socket.on('new game', function(data) {
+        addGame(data, socket);
+      });
+      socket.on('disconnect', function () {
+        console.log('Game joining user disconnected.');
       });
     });
   };

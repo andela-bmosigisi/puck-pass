@@ -106,6 +106,11 @@
   function loadScreen(id) {
     var container = document.getElementById('container');
     document.body.removeChild(container);
+    // delete global variables.
+    delete window.joinGame;
+    delete window.createGame;
+    // close the socket connection.
+    socket.close();
     // dispatch event to game area.
     var gamearea = document.getElementById('gamearea');
     gamearea.removeAttribute('hidden');
