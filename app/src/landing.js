@@ -58,7 +58,7 @@
     dom += '<thead><tr><th>ID</th><th>Name</th><th>Players</th></tr></thead>';
     dom += '</tbody>';
     for (var i = 0; i < gms.vm.list.length; i++) {
-      dom += '<tr><td>' + String(gms.vm.list[i].id) + '</td>';
+      dom += '<tr><td onclick="joinGame(this)">' + String(gms.vm.list[i].id) + '</td>';
       dom += '<td>' + String(gms.vm.list[i].name) + '</td>';
       dom += '<td>' + String(gms.vm.list[i].players) + '</td>';
       dom += '</tr>';
@@ -92,6 +92,27 @@
     } else {
       socket.emit('new game', {name: game_name.value});
     }
+  };
+
+  window.joinGame = function(td) {
+    var id = td.innerHTML.trim();
+    loadScreen(id);
+  };
+
+  socket.on('game added', function(data) {
+    loadScreen(data.id);
+  });
+
+  function loadScreen(id) {
+    var container = document.getElementById('container');
+    document.body.removeChild(container);
+    // dispatch event to game area.
+    var gamearea = document.getElementById('gamearea');
+    gamearea.removeAttribute('hidden');
+    var idAttr = document.createAttribute('gameId');
+    idAttr.value = id;
+    gamearea.setAttributeNode(idAttr);
+    gamearea.dispatchEvent(loadevent);
   };
 
 })();

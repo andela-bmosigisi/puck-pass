@@ -8,7 +8,7 @@
   <title> Pass the Puck</title>
 </head>
 <body>
-  <div class="container">
+  <div class="container" id="container">
     <div class="row center">
       <h5>Create or Join an existing game.</h5>
     </div>
@@ -25,7 +25,10 @@
       </div>
     </div>
   </div>
+  <div id="gamearea" hidden></div>
   <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
   <script type="text/javascript" src="/src/landing.js"></script>
+  <script type="text/javascript" src="/lib/crafty-min.js"></script>
+  <script type="text/javascript" src="/src/app.js"></script>
 </body>
 </html>

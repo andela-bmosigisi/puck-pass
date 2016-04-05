@@ -7,20 +7,20 @@ module.exports = function(io) {
 
   sockets.init = function() {
     io.on('connection', function (socket) {
-      updateGames(socket);
-      socket.on('new game', function(data) {
-        addGame(data, socket);
+      updateGames();
+      socket.on('new game', function(data, socket) {
+        addGame(data);
       });
     });
   };
 
-  var updateGames = function(socket) {
+  var updateGames = function() {
     Game.find({open: true}, function(err, docs) {
       if (err) {
         console.log('Mongoose error: ', err);
-        socket.emit('game update', {games : []});
+        io.sockets.emit('game update', {games : []});
       } else {
-        socket.emit('game update', {games: docs});
+        io.sockets.emit('game update', {games: docs});
       }
     });
   };
@@ -37,7 +37,8 @@ module.exports = function(io) {
         if (err) {
           console.log('Mongoose error: ', err);
         } else {
-          updateGames(socket);
+          updateGames();
+          socket.emit('game added', {id: game.id});
         }
       })
     }
