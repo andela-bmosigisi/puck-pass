@@ -35,7 +35,7 @@ module.exports = function(io) {
     if (data.name) {
       var game = new Game({
         name: data.name,
-        players: 1,
+        players: 0,
         open: true
       });
 
@@ -52,16 +52,18 @@ module.exports = function(io) {
   };
 
   var populateNamespaceArray = function () {
-    Game.find({open: true}, function(err, docs) {
-      if (err) {
-        console.log('Mongoose error: ', err);
-      } else {
-        // create namespaces
-        docs.forEach(function (el) {
-          pushSingleNamespace(String(el._id));
-        });
+    Game.find({open: true, players: { $lt: 4}},
+      function(err, docs) {
+        if (err) {
+          console.log('Mongoose error: ', err);
+        } else {
+          // create namespaces
+          docs.forEach(function (el) {
+            pushSingleNamespace(String(el._id));
+          });
+        }
       }
-    });
+    );
   };
 
   var pushSingleNamespace = function (nspId) {
@@ -83,6 +85,8 @@ module.exports = function(io) {
         nsp.on('connection', function (sckt) {
           console.log('New guy connected to game_id: ', sckt.nsp.name);
           console.log('Connected guy: ', sckt.id);
+          handleGamer(sckt);
+          incrementPlayers(sckt.nsp.name);
         });
         namespaces[i].registered = true;
       }
@@ -98,6 +102,28 @@ module.exports = function(io) {
       }
     }
     return -1;
+  };
+
+  // increase number of players in game.
+  var incrementPlayers = function (gameId) {
+    Game.findOne({_id: gameId.substring(1)}, function (err, game) {
+      if (err) {
+        console.log('Mongoose error: ', err);
+      } else if (!game) {
+        console.log('No such game exists. ', game._id);
+      } else {
+        game.players += 1;
+        game.save(function (err) {
+          if (err) console.log('Mongoose error: ', err);
+          else console.log('Players incremented successfuly.');
+        });
+      }
+    });
+  };
+
+  // control the gaming connections.
+  var handleGamer = function (socket) {
+
   };
 
   return sockets;
