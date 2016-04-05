@@ -6,6 +6,8 @@
     function (e) {
       Crafty.init(1200,640, gamearea);
       var gameId = String(e.target.getAttribute('gameId'));
+      console.log('Game Id: ', gameId);
+      window.socket= io('/' + gameId);
     },
     false
   );
