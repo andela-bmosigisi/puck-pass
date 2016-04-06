@@ -21,14 +21,16 @@ module.exports = function(io) {
   };
 
   var updateGames = function() {
-    Game.find({open: true}, function(err, docs) {
-      if (err) {
-        console.log('Mongoose error: ', err);
-        io.sockets.emit('game update', {games : []});
-      } else {
-        io.sockets.emit('game update', {games: docs});
+    Game.find({open: true, players: { $lt: 4}},
+      function(err, docs) {
+        if (err) {
+          console.log('Mongoose error: ', err);
+          io.sockets.emit('game update', {games : []});
+        } else {
+          io.sockets.emit('game update', {games: docs});
+        }
       }
-    });
+    );
   };
 
   var addGame = function(data, socket) {
@@ -114,8 +116,12 @@ module.exports = function(io) {
       } else {
         game.players += 1;
         game.save(function (err) {
-          if (err) console.log('Mongoose error: ', err);
-          else console.log('Players incremented successfuly.');
+          if (err) {
+            console.log('Mongoose error: ', err);
+          } else {
+            console.log('Players incremented successfuly.');
+            updateGames();
+          }
         });
       }
     });

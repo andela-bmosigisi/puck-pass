@@ -21,7 +21,7 @@
           name: name,
           players: players
         };
-        if (id && name && players) {
+        if (id) {
           gms.vm.list.push(new gms.Game(gameObj));
           gms.vm.ids.push(id);
         } else {
@@ -41,7 +41,7 @@
       };
 
       gms.vm.clear = function() {
-        gms.vm.list = gms.GamesList();
+        gms.vm.list = new gms.GamesList();
         gms.vm.ids = Array();
       };
     }
@@ -78,7 +78,8 @@
     gms.vm.clear();
     if (data.games.length > 0) {
       for (var i = 0; i < data.games.length; i++) {
-        gms.vm.add(data.games[i]._id, data.games[i].name, data.games[i].players);
+        gms.vm.add(data.games[i]._id, data.games[i].name,
+          data.games[i].players);
       }
     }
     gms.render();
