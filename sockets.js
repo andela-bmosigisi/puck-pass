@@ -84,11 +84,13 @@ module.exports = function(io) {
     for (var i = 0; i < namespaces.length; i++) {
       if (namespaces[i].registered === false) {
         var nsp = io.of('/' + namespaces[i].id);
+        nsp.players = Array();
         nsp.on('connection', function (sckt) {
           console.log('New guy connected to game_id: ', sckt.nsp.name);
           console.log('Connected guy: ', sckt.id);
           handleGamer(sckt);
           incrementPlayers(sckt.nsp.name);
+          nsp.emit('game state update', {players: nsp.players});
         });
         namespaces[i].registered = true;
       }
@@ -127,9 +129,14 @@ module.exports = function(io) {
     });
   };
 
+
   // control the gaming connections.
   var handleGamer = function (socket) {
-
+    socket.on('I have chosen', function (data) {
+      data.playerId = socket.id;
+      socket.nsp.players.push(data);
+      socket.nsp.emit('game state update', {players: socket.nsp.players});
+    });
   };
 
   return sockets;
