@@ -26,6 +26,19 @@
     </div>
   </div>
   <div id="gamearea" hidden></div>
+  <div id="controlsarea" class="container" hidden>
+    <div class="row center">
+      <input class="playername" type="text" placeholder=":your name" id="playerName">
+      <button class="button-primary" id="bluebtn" onclick="chooseTeam('blue')">Join Blue Team</button>
+      <button class="button-primary green" id="greenbtn" onclick="chooseTeam('green')">Join Green Team</button>
+    </div>
+    <div class="row center">
+      <br>
+      <object type="image/svg+xml" data="/assets/img/controls.svg">
+        <img src="/assets/img/controls.jpg">
+      </object>
+    </div>
+  </div>
   <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
   <script type="text/javascript" src="/src/landing.js"></script>
   <script type="text/javascript" src="/lib/crafty-min.js"></script>

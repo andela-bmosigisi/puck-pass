@@ -115,6 +115,7 @@
     // dispatch event to game area.
     var gamearea = document.getElementById('gamearea');
     gamearea.removeAttribute('hidden');
+    document.getElementById('controlsarea').removeAttribute('hidden');
     var idAttr = document.createAttribute('gameId');
     idAttr.value = id;
     gamearea.setAttributeNode(idAttr);

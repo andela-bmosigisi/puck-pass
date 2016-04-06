@@ -32,3 +32,32 @@ td:first-child:hover {
   color: #FFF;
   cursor: pointer;
 }
+
+button.green {
+  background-color: green;
+  border-color: green;
+}
+button.green:hover {
+  background-color: #60b044;
+  border-color: #60b044;
+}
+
+input.playername {
+  margin-right: 20px;
+}
+
+::-webkit-input-placeholder {
+   font-style: italic;
+}
+:-moz-placeholder {
+   font-style: italic;
+}
+::-moz-placeholder {
+   font-style: italic;
+}
+
+button[disabled=disabled], button:disabled, input[disabled=disabled], input:disabled,
+input:disabled:hover, button:disabled:hover {
+  background-color: #EEE;
+  border: none;
+}
