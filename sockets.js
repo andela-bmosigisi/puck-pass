@@ -129,13 +129,52 @@ module.exports = function(io) {
     });
   };
 
+  // calculate position for the newly arrived player.
+  // Green always on top.
+  var calculatePosition = function (team, players) {
+    var state = {x: 0, y: 0, h: 20, w: 20};
+    // first is number of greens, other blues.
+    var pThere = [0, 0];
+    for (var i = 0; i < players.length; i++) {
+      if (players[i].team == 'G') {
+        pThere[0] += 1;
+      } else if (players[i].team == 'B') {
+        pThere[1] += 1;
+      }
+    }
+    if (team == 'G') {
+      // if already there's a green.
+      if (pThere[0] == 1) {
+        state.x = 780;
+        state.y = 200;
+      } else {
+        state.x = 380;
+        state.y = 200;
+      }
+    } else {
+      if (pThere[1] == 1) {
+        state.x = 780;
+        state.y = 380;
+      } else {
+        state.x = 380;
+        state.y = 380;
+      }
+    }
+
+    return state;
+  };
 
   // control the gaming connections.
   var handleGamer = function (socket) {
     socket.on('I have chosen', function (data) {
-      data.playerId = socket.id;
-      socket.nsp.players.push(data);
-      socket.nsp.emit('game state update', {players: socket.nsp.players});
+      data.playerId = socket.client.id;
+      data.state = calculatePosition(data.team, socket.nsp.players);
+      if (socket.nsp.players.length < 4) {
+        socket.nsp.players.push(data);
+        socket.nsp.emit('game state update', {players: socket.nsp.players});
+      } else {
+        socket.emit('full game prompt', {});
+      }
     });
   };
 

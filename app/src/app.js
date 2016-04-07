@@ -23,7 +23,7 @@
       alert('Your name is needed.');
       return;
     } else {
-      disableControls();
+      disableControls('all');
       playerObj = addPlayer(color, pname);
       socket.emit('I have chosen', playerObj);
     }
@@ -39,7 +39,6 @@
     playerObj.color = color;
     playerObj.team = color == '#60b044' ? 'G' : 'B';
     playerObj.name = name;
-    playerObj.state = calculatePosition(playerObj.team);
     return playerObj;
   };
 
@@ -47,10 +46,20 @@
   var initUpdatePlayers = function () {
     for (var i = 0; i < players.length; i++) {
       if (!players[i].initialised) {
-        Crafty.e('2D, DOM, Color')
-          .attr(players[i].state)
-          .color(players[i].color);
-        players[i].initialised = true;
+        console.log('Player Id: ', players[i].playerId);
+        console.log('socket Id: ', socket.id);
+        if (players[i].playerId == socket.id) {
+          Crafty.e('2D, DOM, Color, Fourway')
+            .attr(players[i].state)
+            .color(players[i].color)
+            .fourway(200);
+          players[i].initialised = true;
+        } else {
+          Crafty.e('2D, DOM, Color')
+            .attr(players[i].state)
+            .color(players[i].color);
+          players[i].initialised = true;
+        }
       }
     }
   };
@@ -69,47 +78,40 @@
     return;
   };
 
-  // calculate position for the newly arrived player.
-  // Green always on top.
-  var calculatePosition = function (team) {
-    var state = {x: 0, y: 0, h: 40, w: 40};
-    // first is number of greens, other blues.
-    var pThere = [0, 0];
-    for (var i = 0; i < players.length; i++) {
-      if (players[i].team == 'G') {
-        pThere[0] += 1;
-      } else if (players[i].team == 'B') {
-        pThere[1] += 1;
-      }
+  // disable adding name and choosing team controls.
+  var disableControls = function (filter) {
+    var buttons = document.getElementsByTagName('button');
+    switch (filter) {
+      case 'all':
+        document.getElementById('playerName').disabled = true;
+        buttons['bluebtn'].disabled = true;
+        buttons['greenbtn'].disabled = true;
+        break;
+      case 'blue':
+        buttons['bluebtn'].disabled = true;
+        break;
+      case 'green':
+        buttons['greenbtn'].disabled = true;
+        break;
     }
-    if (team == 'G') {
-      // if already there's a green.
-      if (pThere[0] == 1) {
-        state.x = 880;
-        state.y = 140;
-      } else {
-        state.x = 280;
-        state.y = 140;
-      }
-    } else {
-      if (pThere[1] == 1) {
-        state.x = 880;
-        state.y = 440;
-      } else {
-        state.x = 280;
-        state.y = 440;
-      }
-    }
-
-    return state;
   };
 
-  // disable adding name and choosing team controls.
-  var disableControls = function () {
-    var buttons = document.getElementsByTagName('button');
-    document.getElementById('playerName').disabled = true;
-    buttons['bluebtn'].disabled = true;
-    buttons['greenbtn'].disabled = true;
+  // Check which players are already in the game.
+  // In order to decide which teams allowed to join.
+  var updateChooseControls = function () {
+    var grn = 0, blue = 0;
+    for (var i = 0; i < players.length; i++) {
+      if (players[i].team === 'G') {
+        grn++;
+      } else {
+        blue++;
+      }
+    }
+    if (grn === 2) {
+      disableControls('green');
+    } else if (blue === 2) {
+      disableControls('blue');
+    }
   };
 
   // returns -1 if an object with that key is in the array.
@@ -128,7 +130,13 @@
     socket.on('game state update', function (data) {
       console.log('Players sent from server: ', data.players);
       updateLocalPlayersCopy(data.players);
+      updateChooseControls();
       initUpdatePlayers();
+    });
+
+    socket.on('full game prompt', function () {
+      alert('Game already full. Choose another or make one.');
+      window.location.href = '/';
     });
   };
 })();
