@@ -4,6 +4,7 @@
   var players = Array();
   var playerNameEntities = Array();
   var socket = {};
+  var rootAssetUrl = '/assets';
 
   window.loadevent = new Event('load');
   var gamearea = document.getElementById('gamearea');
@@ -18,27 +19,26 @@
   );
 
   // respond to the choose team onclick.
-  window.chooseTeam = function (color) {
+  window.chooseTeam = function (team) {
     var pname = document.getElementById('playerName').value;
     if (pname.length == 0) {
       alert('Your name is needed.');
       return;
     } else {
       disableControls('all');
-      playerObj = addPlayer(color, pname);
+      playerObj = addPlayer(team, pname);
       socket.emit('I have chosen', playerObj);
     }
   };
 
   // add a single player.
-  var addPlayer = function (color, name) {
+  var addPlayer = function (team, name) {
     var playerObj = {first: false, initialised: false};
 
     if (players.length == 0) {
       playerObj.first = true;
     }
-    playerObj.color = color;
-    playerObj.team = color == '#60b044' ? 'G' : 'B';
+    playerObj.team = team;
     playerObj.name = name;
     return playerObj;
   };
@@ -55,19 +55,20 @@
           .textFont({
             size: '15px'
           });
+          var img = players[i].team == 'G' ? 'green' : 'blue';
         if (players[i].playerId == socket.id) {
-          Crafty.e('2D, DOM, Color, Fourway')
+          Crafty.e('2D, DOM, Fourway, Image')
             .attr(players[i].state)
-            .color(players[i].color)
-            .fourway(200);
+            .fourway(250)
+            .image(rootAssetUrl + '/img/' + img + '.png');
           players[i].initialised = true;
           nameText.textFont({
             weight: 'bold'
           });
         } else {
-          Crafty.e('2D, DOM, Color')
+          Crafty.e('2D, DOM, Image')
             .attr(players[i].state)
-            .color(players[i].color);
+            .image(rootAssetUrl + '/img/' + img + '.png');
           players[i].initialised = true;
         }
         playerNameEntities.push(nameText);
