@@ -2,6 +2,7 @@
 
   // global variables.
   var players = Array();
+  var playerNameEntities = Array();
   var socket = {};
 
   window.loadevent = new Event('load');
@@ -48,18 +49,28 @@
       if (!players[i].initialised) {
         console.log('Player Id: ', players[i].playerId);
         console.log('socket Id: ', socket.id);
+        var nameText = Crafty.e('2D, DOM, Text')
+          .attr({x: players[i].state.x, y: players[i].state.y + 25})
+          .text(players[i].name)
+          .textFont({
+            size: '15px'
+          });
         if (players[i].playerId == socket.id) {
           Crafty.e('2D, DOM, Color, Fourway')
             .attr(players[i].state)
             .color(players[i].color)
             .fourway(200);
           players[i].initialised = true;
+          nameText.textFont({
+            weight: 'bold'
+          });
         } else {
           Crafty.e('2D, DOM, Color')
             .attr(players[i].state)
             .color(players[i].color);
           players[i].initialised = true;
         }
+        playerNameEntities.push(nameText);
       }
     }
   };
