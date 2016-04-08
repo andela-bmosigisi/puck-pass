@@ -12,10 +12,10 @@
   var gamearea = document.getElementById('gamearea');
   gamearea.addEventListener('load',
     function (e) {
-      Crafty.init(1200,640, gamearea);
-      var gameId = String(e.target.getAttribute('gameId'));
-      socket = io('/' + gameId);
-      handlePlayerSocket(socket);
+        Crafty.init(1200,640, gamearea);
+        var gameId = String(e.target.getAttribute('gameId'));
+        socket = io('/' + gameId);
+        handlePlayerSocket(socket);
     },
     false
   );
@@ -51,7 +51,7 @@
       if (!players[i].initialised) {
         console.log('Player Id: ', players[i].playerId);
         console.log('socket Id: ', socket.id);
-        var nameText = Crafty.e('2D, DOM, Text')
+        var nameText = Crafty.e('2D, Canvas, Text')
           .attr({x: players[i].state.x, y: players[i].state.y + 25})
           .text(players[i].name)
           .textFont({
