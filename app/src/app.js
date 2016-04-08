@@ -2,7 +2,6 @@
 
   // global variables.
   var players = Array();
-  var playerNameEntities = Array();
   var socket = {};
   var rootAssetUrl = '/assets';
   var me = {};
@@ -51,7 +50,7 @@
       if (!players[i].initialised) {
         console.log('Player Id: ', players[i].playerId);
         console.log('socket Id: ', socket.id);
-        var nameText = Crafty.e('2D, Canvas, Text')
+        var nameText = Crafty.e('2D, DOM, Text')
           .attr({x: players[i].state.x, y: players[i].state.y + 25})
           .text(players[i].name)
           .textFont({
@@ -78,7 +77,6 @@
           players[i].initialised = true;
           livePlayers[players[i].playerId] = temp;
         }
-        playerNameEntities.push(nameText);
       }
     }
   };
@@ -88,7 +86,7 @@
     for (var i = 0; i < sentPlayers.length; i++) {
       if (checkObjectInArray(players, sentPlayers[i].playerId,
         'playerId') == -1) {
-          players.push(sentPlayers[i]);
+          players.push(Object.create(sentPlayers[i]));
       }
     }
     // some garbage collection.
