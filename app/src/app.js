@@ -90,7 +90,7 @@
       }
     }
     // some garbage collection.
-    delete sentPlayers;
+    sentPlayers = undefined;
 
     return;
   };
