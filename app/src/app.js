@@ -1,11 +1,13 @@
 (function () {
 
-  // global variables.
+  // function wide variables.
   var players = Array();
-  var socket = {};
   var rootAssetUrl = '/assets';
-  var me = {};
-  var livePlayers = {};
+
+  // global variables
+  window.socket = {};
+  window.me = {};
+  window.livePlayers = {};
 
   window.loadevent = new Event('load');
   var gamearea = document.getElementById('gamearea');
@@ -58,21 +60,12 @@
           });
         var img = players[i].team == 'G' ? 'green' : 'blue';
         if (players[i].playerId == socket.id) {
-          me = Crafty.e('Player, Me')
+          me = Crafty.e('Player')
             .attr(players[i].state)
-            .image(rootAssetUrl + '/img/' + img + '.png')
-            .fourway(250)
-            .gamepadMultiway({
-              speed: 250,
-              gamepadIndex: 0
-            });
+            .image(rootAssetUrl + '/img/' + img + '.png');
           players[i].initialised = true;
           nameText.textFont({
             weight: 'bold'
-          });
-
-          me.bind('Move', function () {
-            me.trigger('positionChanged', socket);
           });
         } else {
           var temp = Crafty.e('Player')

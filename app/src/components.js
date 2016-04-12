@@ -9,6 +9,9 @@
     init: function () {
       this.addComponent('Fourway, GamepadMultiway, Collision');
       this.collideWithSolids();
+      this.bind('Move', function () {
+        this.trigger('positionChanged', window.socket);
+      });
     },
 
     events: {
