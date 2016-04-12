@@ -5,7 +5,6 @@
     }
 
   });
-<<<<<<< da6966c99b8011b591ccc1e7e16216615b8c7993
 
   Crafty.c('Me', {
     init: function () {
@@ -18,6 +17,4 @@
       }
     }
   });
-=======
->>>>>>> separate out components
 })()
