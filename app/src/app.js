@@ -50,8 +50,6 @@
   var initUpdatePlayers = function () {
     for (var i = 0; i < players.length; i++) {
       if (!players[i].initialised) {
-        console.log('Player Id: ', players[i].playerId);
-        console.log('socket Id: ', socket.id);
         var nameText = Crafty.e('2D, DOM, Text')
           .attr({x: players[i].state.x, y: players[i].state.y + 25})
           .text(players[i].name)
@@ -175,7 +173,6 @@
   var handlePlayerSocket = function (socket) {
     // once a player chooses a team, the server broadcasts this event.
     socket.on('game state update', function (data) {
-      console.log('Players sent from server: ', data.players);
       updateLocalPlayersCopy(data.players);
       updateChooseControls();
       initUpdatePlayers();

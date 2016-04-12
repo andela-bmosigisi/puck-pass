@@ -7,10 +7,15 @@
 
   Crafty.c('Me', {
     init: function () {
-      this.addComponent('Fourway, GamepadMultiway, Collision');
-      this.collideWithSolids();
-      this.bind('Move', function () {
-        this.trigger('positionChanged', window.socket);
+      this.addComponent('Fourway, GamepadMultiway, Collision')
+        .collideWithSolids()
+        .bind('Move', function () {
+          this.trigger('positionChanged', window.socket);
+        });
+      this.bind('Moved', function (from) {
+        if (this.hit('Wall')) {
+          this[from.axis] = from.oldValue;
+        }
       });
     },
 
@@ -27,7 +32,14 @@
         this.x -= hitData.overlap * hitData.normal.x;
         this.y -= hitData.overlap * hitData.normal.y;
       });
+
       return this;
+    }
+  });
+
+  Crafty.c('Wall', {
+    init: function () {
+      this.addComponent('2D');
     }
   });
 })()
