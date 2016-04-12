@@ -5,6 +5,8 @@
   var playerNameEntities = Array();
   var socket = {};
   var rootAssetUrl = '/assets';
+  var me = {};
+  var livePlayers = {};
 
   window.loadevent = new Event('load');
   var gamearea = document.getElementById('gamearea');
@@ -55,21 +57,26 @@
           .textFont({
             size: '15px'
           });
-          var img = players[i].team == 'G' ? 'green' : 'blue';
+        var img = players[i].team == 'G' ? 'green' : 'blue';
         if (players[i].playerId == socket.id) {
-          Crafty.e('2D, DOM, Fourway, Image')
+          me = Crafty.e('Player, Me')
             .attr(players[i].state)
-            .fourway(250)
-            .image(rootAssetUrl + '/img/' + img + '.png');
+            .image(rootAssetUrl + '/img/' + img + '.png')
+            .fourway(250);
           players[i].initialised = true;
           nameText.textFont({
             weight: 'bold'
           });
+
+          me.bind('Move', function () {
+            me.trigger('positionChanged', socket);
+          });
         } else {
-          Crafty.e('2D, DOM, Image')
+          var temp = Crafty.e('Player')
             .attr(players[i].state)
             .image(rootAssetUrl + '/img/' + img + '.png');
           players[i].initialised = true;
+          livePlayers[players[i].playerId] = temp;
         }
         playerNameEntities.push(nameText);
       }
@@ -137,6 +144,39 @@
     return -1;
   };
 
+  var checkGameStart = function () {
+    if (players.length == 4) {
+      var start = 5;
+      Crafty.e('2D, DOM, Color')
+        .attr({x: 0, y: 0, w: 1200, h: 640})
+        .color('rgba(216,216,216,0.50)');
+      var countdown = Crafty.e('2D, DOM, Text')
+        .attr({x: 580, y: 300})
+        .text(start)
+        .textFont({
+          size: '45px'
+        });
+      var interval = setInterval(function () {
+        countdown.text(start--);
+        if (start == -1) {
+          Crafty.enterScene('GameStart');
+          clearInterval(interval);
+        }
+      }, 1000);
+    }
+  };
+
+  // update positions of players on field
+  var updatePositionState = function (data) {
+    var socketKeys = Object.keys(data);
+    for (var i = 0; i < socketKeys.length; i++) {
+      if (socketKeys[i] != socket.id) {
+        livePlayers[socketKeys[i]].x = data[socketKeys[i]].x;
+        livePlayers[socketKeys[i]].y = data[socketKeys[i]].y;
+      }
+    }
+  };
+
   var handlePlayerSocket = function (socket) {
     // once a player chooses a team, the server broadcasts this event.
     socket.on('game state update', function (data) {
@@ -144,11 +184,17 @@
       updateLocalPlayersCopy(data.players);
       updateChooseControls();
       initUpdatePlayers();
+      checkGameStart();
     });
 
     socket.on('full game prompt', function () {
       alert('Game already full. Choose another or make one.');
       window.location.href = '/';
+    });
+
+    socket.on('update position state', function (data) {
+      // data contains new positions of new player.
+      updatePositionState(data.players);
     });
   };
 })();

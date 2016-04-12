@@ -85,6 +85,7 @@ module.exports = function(io) {
       if (namespaces[i].registered === false) {
         var nsp = io.of('/' + namespaces[i].id);
         nsp.players = Array();
+        nsp.gameState = {};
         nsp.on('connection', function (sckt) {
           console.log('New guy connected to game_id: ', sckt.nsp.name);
           console.log('Connected guy: ', sckt.id);
@@ -175,6 +176,12 @@ module.exports = function(io) {
       } else {
         socket.emit('full game prompt', {});
       }
+    });
+
+    socket.on('changed position', function (data) {
+      socket.nsp.gameState[socket.client.id] = data;
+      socket.nsp.emit('update position state',
+        {players: socket.nsp.gameState});
     });
   };
 
