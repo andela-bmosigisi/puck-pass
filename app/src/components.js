@@ -20,10 +20,9 @@
 
     collideWithSolids: function () {
       this.onHit('Solid', function (collisionInfo) {
+        var hitData = collisionInfo[0];
         this.x -= hitData.overlap * hitData.normal.x;
         this.y -= hitData.overlap * hitData.normal.y;
-        collisionInfo[0].obj.x;
-        collisionInfo[0].obj.y;
       });
       return this;
     }
