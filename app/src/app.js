@@ -61,7 +61,11 @@
           me = Crafty.e('Player, Me')
             .attr(players[i].state)
             .image(rootAssetUrl + '/img/' + img + '.png')
-            .fourway(250);
+            .fourway(250)
+            .gamepadMultiway({
+              speed: 250,
+              gamepadIndex: 0
+            });
           players[i].initialised = true;
           nameText.textFont({
             weight: 'bold'
