@@ -61,6 +61,7 @@
           me = Crafty.e('Player')
             .attr(players[i].state)
             .image(rootAssetUrl + '/img/' + img + '.png');
+          me.team = players[i].team;
           players[i].initialised = true;
           nameText.textFont({
             weight: 'bold'
@@ -69,6 +70,7 @@
           var temp = Crafty.e('Player')
             .attr(players[i].state)
             .image(rootAssetUrl + '/img/' + img + '.png');
+          temp.team = players[i].team;
           players[i].initialised = true;
           livePlayers[players[i].playerId] = temp;
         }

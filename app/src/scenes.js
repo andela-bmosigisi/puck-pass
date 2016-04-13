@@ -15,7 +15,7 @@
     Crafty.e('Wall').attr({x: 1200, y: 0, w: 1, h: 640});
 
     // Initialize the puck.
-    Crafty.e('Puck').attr({x: 592, y: 312});
+    window.puck = Crafty.e('Puck').attr({x: 592, y: 312});
   }, function () {
 
   });
