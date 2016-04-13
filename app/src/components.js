@@ -42,4 +42,12 @@
       this.addComponent('2D');
     }
   });
+
+  Crafty.c('Puck', {
+    init: function () {
+      this.addComponent('2D, DOM, Image')
+        .attr({w: 16, h: 16})
+        .image('/assets/img/puck.png');
+    }
+  });
 })()

@@ -152,8 +152,8 @@
       var interval = setInterval(function () {
         countdown.text(start--);
         if (start == -1) {
-          Crafty.enterScene('GameStart');
           clearInterval(interval);
+          Crafty.enterScene('GameStart');
         }
       }, 1000);
     }

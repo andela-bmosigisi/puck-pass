@@ -13,6 +13,9 @@
     Crafty.e('Wall').attr({x: -1, y: 0, w: 1, h: 640});
     Crafty.e('Wall').attr({x: 0, y: 640, w: 1200, h: 1});
     Crafty.e('Wall').attr({x: 1200, y: 0, w: 1, h: 640});
+
+    // Initialize the puck.
+    Crafty.e('Puck').attr({x: 592, y: 312});
   }, function () {
 
   });
