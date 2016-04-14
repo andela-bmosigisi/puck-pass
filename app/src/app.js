@@ -48,7 +48,7 @@
     for (var i = 0; i < players.length; i++) {
       if (!players[i].initialised) {
         var nameText = Crafty.e('2D, DOM, Text')
-          .attr({x: players[i].state.x, y: players[i].state.y + 25})
+          .attr({x: players[i].position.x, y: players[i].position.y + 25})
           .text(players[i].name)
           .textFont({
             size: '15px'
@@ -57,7 +57,7 @@
         if (players[i].playerId == socket.id) {
           var imageUrl = rootAssetUrl + '/img/' + img + '.png';
           me = Crafty.e('Player')
-            .attr(players[i].state)
+            .attr(players[i].position)
             .image(imageUrl);
           me.team = players[i].team;
           me.playerId = players[i].playerId;
@@ -69,7 +69,7 @@
         } else {
           var imageUrl = rootAssetUrl + '/img/' + img + '.png';
           var temp = Crafty.e('Player')
-            .attr(players[i].state)
+            .attr(players[i].position)
             .image(imageUrl);
           temp.team = players[i].team;
           temp.playerId = players[i].playerId;
@@ -83,14 +83,14 @@
 
   // update the local copy of players.
   var updateLocalPlayersCopy = function (sentPlayers) {
-    for (var i = 0; i < sentPlayers.length; i++) {
-      if (checkObjectInArray(players, sentPlayers[i].playerId,
+    var keys = Object.keys(sentPlayers);
+    for (var i = 0; i < keys.length; i++) {
+      if (checkObjectInArray(players, keys[i],
         'playerId') == -1) {
-          players.push(Object.create(sentPlayers[i]));
+          sentPlayers[keys[i]].playerId = keys[i];
+          players.push(sentPlayers[keys[i]]);
       }
     }
-    // some garbage collection.
-    sentPlayers = undefined;
 
     return;
   };
@@ -180,7 +180,7 @@
   var handlePlayerSocket = function (socket) {
     // once a player chooses a team, the server broadcasts this event.
     socket.on('game state update', function (data) {
-      updateLocalPlayersCopy(data.players);
+      updateLocalPlayersCopy(data.game.players);
       updateChooseControls();
       initUpdatePlayers();
       checkGameStart();
@@ -193,7 +193,7 @@
 
     socket.on('update player state', function (data) {
       // data contains new positions of new player.
-      updatePlayerState(data.players);
+      updatePlayerState(data.game.players);
     });
   };
 })();

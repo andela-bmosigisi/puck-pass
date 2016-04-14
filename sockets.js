@@ -6,7 +6,7 @@ module.exports = function(io) {
 
   var sockets = {};
 
-  var Game = function () {
+  var GameClass = function () {
     this.puck = {};
     this.players = {};
     this.scores = {};
@@ -92,13 +92,13 @@ module.exports = function(io) {
       if (namespaces[i].registered === false) {
         var nsp = io.of('/' + namespaces[i].id);
         nsp.gameState = {};
-        nsp.game = new Game();
+        nsp.game = new GameClass();
         nsp.on('connection', function (sckt) {
           console.log('New guy connected to game_id: ', sckt.nsp.name);
           console.log('Connected guy: ', sckt.id);
           handleGamer(sckt);
           incrementPlayers(sckt.nsp.name);
-          nsp.emit('game state update', {players: nsp.game});
+          nsp.emit('game state update', {game: nsp.game});
         });
         namespaces[i].registered = true;
       }
@@ -143,11 +143,13 @@ module.exports = function(io) {
     var state = {x: 0, y: 0, h: 20, w: 20};
     // first is number of greens, other blues.
     var pThere = [0, 0];
-    for (var i = 0; i < players.length; i++) {
-      if (players[i].team == 'G') {
-        pThere[0] += 1;
-      } else if (players[i].team == 'B') {
-        pThere[1] += 1;
+    for (var key in players) {
+      if (players.hasOwnProperty(key)) {
+        if (players[key].team == 'G') {
+          pThere[0] += 1;
+        } else if (players[key].team == 'B') {
+          pThere[1] += 1;
+        }
       }
     }
     if (team == 'G') {
@@ -176,13 +178,13 @@ module.exports = function(io) {
   var handleGamer = function (socket) {
     socket.on('I have chosen', function (data) {
       socket.nsp.game.players[socket.client.id] = {};
-      var position = calculatePosition(data.team, socket.nsp.players);
+      var position = calculatePosition(data.team, socket.nsp.game.players);
       if (socket.nsp.game.playersCount < 4) {
         socket.nsp.game.players[socket.client.id].position = position;
         socket.nsp.game.players[socket.client.id].team = data.team;
         socket.nsp.game.players[socket.client.id].name = data.name;
         socket.nsp.game.playersCount++;
-        socket.nsp.emit('game state update', {players: socket.nsp.game});
+        socket.nsp.emit('game state update', {game: socket.nsp.game});
       } else {
         socket.emit('full game prompt', {});
       }
@@ -191,7 +193,7 @@ module.exports = function(io) {
     socket.on('changed position', function (data) {
       socket.nsp.gameState[socket.client.id].position = data;
       socket.nsp.emit('update player state',
-        {players: socket.nsp.game});
+        {game: socket.nsp.game});
     });
 
     socket.on('changed image', function (data) {
@@ -202,7 +204,7 @@ module.exports = function(io) {
       }
 
       socket.nsp.emit('update player state',
-        {players: socket.nsp.game});
+        {game: socket.nsp.game});
     });
   };
 
