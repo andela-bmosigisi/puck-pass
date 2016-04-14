@@ -6,6 +6,13 @@ module.exports = function(io) {
 
   var sockets = {};
 
+  var Game = function () {
+    this.puck = {};
+    this.players = {};
+    this.scores = {};
+    this.playersCount = 0;
+  };
+
   sockets.init = function() {
     io.on('connection', function (socket) {
       updateGames();
@@ -84,14 +91,14 @@ module.exports = function(io) {
     for (var i = 0; i < namespaces.length; i++) {
       if (namespaces[i].registered === false) {
         var nsp = io.of('/' + namespaces[i].id);
-        nsp.players = Array();
         nsp.gameState = {};
+        nsp.game = new Game();
         nsp.on('connection', function (sckt) {
           console.log('New guy connected to game_id: ', sckt.nsp.name);
           console.log('Connected guy: ', sckt.id);
           handleGamer(sckt);
           incrementPlayers(sckt.nsp.name);
-          nsp.emit('game state update', {players: nsp.players});
+          nsp.emit('game state update', {players: nsp.game});
         });
         namespaces[i].registered = true;
       }
@@ -168,34 +175,34 @@ module.exports = function(io) {
   // control the gaming connections.
   var handleGamer = function (socket) {
     socket.on('I have chosen', function (data) {
-      data.playerId = socket.client.id;
-      data.state = calculatePosition(data.team, socket.nsp.players);
-      if (socket.nsp.players.length < 4) {
-        socket.nsp.players.push(data);
-        socket.nsp.emit('game state update', {players: socket.nsp.players});
+      socket.nsp.game.players[socket.client.id] = {};
+      var position = calculatePosition(data.team, socket.nsp.players);
+      if (socket.nsp.game.playersCount < 4) {
+        socket.nsp.game.players[socket.client.id].position = position;
+        socket.nsp.game.players[socket.client.id].team = data.team;
+        socket.nsp.game.players[socket.client.id].name = data.name;
+        socket.nsp.game.playersCount++;
+        socket.nsp.emit('game state update', {players: socket.nsp.game});
       } else {
         socket.emit('full game prompt', {});
       }
     });
 
     socket.on('changed position', function (data) {
-      socket.nsp.gameState[socket.client.id] = data;
+      socket.nsp.gameState[socket.client.id].position = data;
       socket.nsp.emit('update player state',
-        {players: socket.nsp.gameState});
+        {players: socket.nsp.game});
     });
 
     socket.on('changed image', function (data) {
       var keys = Object.keys(data);
 
       for (var i = 0; i < keys.length; i++) {
-        if (!socket.nsp.gameState[keys[i]]) {
-          socket.nsp.gameState[keys[i]] = {};
-        }
-        socket.nsp.gameState[keys[i]].imageUrl = data[keys[i]];
+        socket.nsp.game.players[keys[i]].imageUrl = data[keys[i]];
       }
 
       socket.nsp.emit('update player state',
-        {players: socket.nsp.gameState});
+        {players: socket.nsp.game});
     });
   };
 

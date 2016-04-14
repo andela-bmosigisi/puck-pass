@@ -36,11 +36,8 @@
 
   // add a single player.
   var addPlayer = function (team, name) {
-    var playerObj = {first: false, initialised: false};
+    var playerObj = {initialised: false};
 
-    if (players.length == 0) {
-      playerObj.first = true;
-    }
     playerObj.team = team;
     playerObj.name = name;
     return playerObj;
