@@ -58,20 +58,26 @@
           });
         var img = players[i].team == 'G' ? 'green' : 'blue';
         if (players[i].playerId == socket.id) {
+          var imageUrl = rootAssetUrl + '/img/' + img + '.png';
           me = Crafty.e('Player')
             .attr(players[i].state)
-            .image(rootAssetUrl + '/img/' + img + '.png');
+            .image(imageUrl);
           me.team = players[i].team;
+          me.playerId = players[i].playerId;
           players[i].initialised = true;
+          me.imageUrl = imageUrl;
           nameText.textFont({
             weight: 'bold'
           });
         } else {
+          var imageUrl = rootAssetUrl + '/img/' + img + '.png';
           var temp = Crafty.e('Player')
             .attr(players[i].state)
-            .image(rootAssetUrl + '/img/' + img + '.png');
+            .image(imageUrl);
           temp.team = players[i].team;
+          temp.playerId = players[i].playerId;
           players[i].initialised = true;
+          temp.imageUrl = imageUrl;
           livePlayers[players[i].playerId] = temp;
         }
       }
@@ -162,12 +168,14 @@
   };
 
   // update positions of players on field
-  var updatePositionState = function (data) {
+  var updatePlayerState = function (data) {
     var socketKeys = Object.keys(data);
+    me.image(me.imageUrl);
     for (var i = 0; i < socketKeys.length; i++) {
       if (socketKeys[i] != socket.id) {
         livePlayers[socketKeys[i]].x = data[socketKeys[i]].x;
         livePlayers[socketKeys[i]].y = data[socketKeys[i]].y;
+        livePlayers[socketKeys[i]].image(livePlayers[socketKeys[i]].imageUrl);
       }
     }
   };
@@ -186,9 +194,9 @@
       window.location.href = '/';
     });
 
-    socket.on('update position state', function (data) {
+    socket.on('update player state', function (data) {
       // data contains new positions of new player.
-      updatePositionState(data.players);
+      updatePlayerState(data.players);
     });
   };
 })();

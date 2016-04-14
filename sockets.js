@@ -180,7 +180,21 @@ module.exports = function(io) {
 
     socket.on('changed position', function (data) {
       socket.nsp.gameState[socket.client.id] = data;
-      socket.nsp.emit('update position state',
+      socket.nsp.emit('update player state',
+        {players: socket.nsp.gameState});
+    });
+
+    socket.on('changed image', function (data) {
+      var keys = Object.keys(data);
+
+      for (var i = 0; i < keys.length; i++) {
+        if (!socket.nsp.gameState[keys[i]]) {
+          socket.nsp.gameState[keys[i]] = {};
+        }
+        socket.nsp.gameState[keys[i]].imageUrl = data[keys[i]];
+      }
+
+      socket.nsp.emit('update player state',
         {players: socket.nsp.gameState});
     });
   };

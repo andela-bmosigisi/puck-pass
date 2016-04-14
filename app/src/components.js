@@ -37,18 +37,30 @@
         this.y -= hitData.overlap * hitData.normal.y;
         if (this.hasPuck) {
           this.hasPuck = false;
-          var color = this.team == 'B' ? 'blue': 'green';
-          this.image('/assets/img/' + color + '.png');
-          color = collider.team == 'B' ? 'blue': 'green';
-          collider.image('/assets/img/' + color + '-puck.png');
+          var imageUrlA = '/assets/img/' + (this.team == 'B' ? 'blue': 'green') + '.png';
+          var imageUrlB = '/assets/img/' + (collider.team == 'B' ? 'blue': 'green') + '-puck.png';
+          var imageData = {};
+          imageData[this.playerId] = imageUrlA;
+          imageData[collider.playerId] = imageUrlB;
+          window.socket.emit('changed image', imageData);
+          this.image(imageUrlA);
+          collider.image(imageUrlB)
           collider.hasPuck = true;
+          this.imageUrl = imageUrlA;
+          collider.imageUrl = imageUrlB;
         } else if (collider.hasPuck) {
           collider.hasPuck = false;
-          var color = collider.team == 'B' ? 'blue': 'green';
-          collider.image('/assets/img/' + color + '.png');
-          color = this.team == 'B' ? 'blue' : 'green';
-          this.image('/assets/img/' + color + '-puck.png');
+          var imageUrlA = '/assets/img/' + (this.team == 'B' ? 'blue' : 'green') + '-puck.png';
+          var imageUrlB = '/assets/img/' + (collider.team == 'B' ? 'blue': 'green') + '.png';
+          var imageData = {};
+          imageData[this.playerId] = imageUrlA;
+          imageData[collider.playerId] = imageUrlB;
+          window.socket.emit('changed image', imageData);
           this.hasPuck = true;
+          this.image(imageUrlA);
+          this.imageUrl = imageUrlA;
+          collider.image(imageUrlB);
+          collider.imageUrl = imageUrlB;
         }
       });
 
@@ -59,8 +71,13 @@
       this.onHit('Puck', function (collisionInfo) {
         var color = this.team == 'B' ? 'blue': 'green';
         console.log(this.team);
-        this.image('/assets/img/' + color + '-puck.png');
+        var imageUrl = '/assets/img/' + color + '-puck.png';
+        this.image(imageUrl);
         this.hasPuck = true;
+        this.imageUrl = imageUrl;
+        var imageData = {};
+        imageData[this.playerId] = imageUrl;
+        window.socket.emit('changed image', imageData);
         puck.destroy();
       });
 
