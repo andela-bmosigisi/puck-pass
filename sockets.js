@@ -183,6 +183,9 @@ module.exports = function(io) {
         socket.nsp.game.players[socket.client.id].position = position;
         socket.nsp.game.players[socket.client.id].team = data.team;
         socket.nsp.game.players[socket.client.id].name = data.name;
+        socket.nsp.game.players[socket.client.id].imageUrl =
+          '/assets/img/' + (data.team == 'G' ? 'green' : 'blue') + '.png';
+        socket.nsp.game.players[socket.client.id].hasPuck = false;
         socket.nsp.game.playersCount++;
         socket.nsp.emit('game state update', {game: socket.nsp.game});
       } else {
@@ -191,19 +194,30 @@ module.exports = function(io) {
     });
 
     socket.on('changed position', function (data) {
-      socket.nsp.gameState[socket.client.id].position = data;
-      socket.nsp.emit('update player state',
+      socket.nsp.game.players[socket.client.id].position = data;
+      socket.nsp.emit('update live state',
+        {game: socket.nsp.game});
+    });
+
+    socket.on('game started', function () {
+      socket.nsp.emit('update live state',
         {game: socket.nsp.game});
     });
 
     socket.on('changed image', function (data) {
-      var keys = Object.keys(data);
-
-      for (var i = 0; i < keys.length; i++) {
-        socket.nsp.game.players[keys[i]].imageUrl = data[keys[i]];
+      for (var key in data.images) {
+        if (data.images.hasOwnProperty(key)) {
+           socket.nsp.game.players[key].imageUrl = data.images[key];
+        }
       }
 
-      socket.nsp.emit('update player state',
+      for (var key in data.puckery) {
+        if (data.puckery.hasOwnProperty(key)) {
+           socket.nsp.game.players[key].hasPuck = data.puckery[key];
+        }
+      }
+
+      socket.nsp.emit('update live state',
         {game: socket.nsp.game});
     });
   };

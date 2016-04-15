@@ -39,22 +39,27 @@
           this.hasPuck = false;
           var imageUrlA = '/assets/img/' + (this.team == 'B' ? 'blue': 'green') + '.png';
           var imageUrlB = '/assets/img/' + (collider.team == 'B' ? 'blue': 'green') + '-puck.png';
-          var imageData = {};
-          imageData[this.playerId] = imageUrlA;
-          imageData[collider.playerId] = imageUrlB;
+          var imageData = { images: {}, puckery: {} };
+          imageData.images[this.playerId] = imageUrlA;
+          imageData.images[collider.playerId] = imageUrlB;
+          imageData.puckery[this.playerId] = false;
+          imageData.puckery[collider.playerId] = true;
           window.socket.emit('changed image', imageData);
           this.image(imageUrlA);
-          collider.image(imageUrlB)
+          collider.image(imageUrlB);
           collider.hasPuck = true;
           this.imageUrl = imageUrlA;
           collider.imageUrl = imageUrlB;
         } else if (collider.hasPuck) {
+          console.log('Its the collider that has the puck');
           collider.hasPuck = false;
           var imageUrlA = '/assets/img/' + (this.team == 'B' ? 'blue' : 'green') + '-puck.png';
           var imageUrlB = '/assets/img/' + (collider.team == 'B' ? 'blue': 'green') + '.png';
-          var imageData = {};
-          imageData[this.playerId] = imageUrlA;
-          imageData[collider.playerId] = imageUrlB;
+          var imageData = { images: {}, puckery: {} };
+          imageData.images[this.playerId] = imageUrlA;
+          imageData.images[collider.playerId] = imageUrlB;
+          imageData.puckery[this.playerId] = true;
+          imageData.puckery[collider.playerId] = false;
           window.socket.emit('changed image', imageData);
           this.hasPuck = true;
           this.image(imageUrlA);
@@ -70,15 +75,15 @@
     collideWithPuck: function () {
       this.onHit('Puck', function (collisionInfo) {
         var color = this.team == 'B' ? 'blue': 'green';
-        console.log(this.team);
         var imageUrl = '/assets/img/' + color + '-puck.png';
         this.image(imageUrl);
         this.hasPuck = true;
         this.imageUrl = imageUrl;
-        var imageData = {};
-        imageData[this.playerId] = imageUrl;
+        var imageData = { images: {}, puckery: {} };
+        imageData.images[this.playerId] = imageUrl;
+        imageData.puckery[this.playerId] = true;
         window.socket.emit('changed image', imageData);
-        puck.destroy();
+        game.puck.destroy();
       });
 
       return this;

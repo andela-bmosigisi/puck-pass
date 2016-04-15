@@ -164,19 +164,6 @@
     }
   };
 
-  // update positions of players on field
-  var updatePlayerState = function (data) {
-    var socketKeys = Object.keys(data);
-    me.image(me.imageUrl);
-    for (var i = 0; i < socketKeys.length; i++) {
-      if (socketKeys[i] != socket.id) {
-        livePlayers[socketKeys[i]].x = data[socketKeys[i]].x;
-        livePlayers[socketKeys[i]].y = data[socketKeys[i]].y;
-        livePlayers[socketKeys[i]].image(livePlayers[socketKeys[i]].imageUrl);
-      }
-    }
-  };
-
   var handlePlayerSocket = function (socket) {
     // once a player chooses a team, the server broadcasts this event.
     socket.on('game state update', function (data) {
@@ -191,9 +178,5 @@
       window.location.href = '/';
     });
 
-    socket.on('update player state', function (data) {
-      // data contains new positions of new player.
-      updatePlayerState(data.game.players);
-    });
   };
 })();
