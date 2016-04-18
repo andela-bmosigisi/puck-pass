@@ -217,6 +217,19 @@ module.exports = function(io) {
         }
       }
 
+      // ensure that only one player has a puck.
+      var foundOne = false;
+      for (var playerId in socket.nsp.game.players) {
+        if (socket.nsp.game.players.hasOwnProperty(playerId)) {
+          if (socket.nsp.game.players[playerId].hasPuck && !foundOne) {
+            foundOne = true;
+            continue;
+          } else {
+            socket.nsp.game.players[playerId].hasPuck = false;
+          }
+        }
+      }
+
       socket.nsp.emit('update live state',
         {game: socket.nsp.game});
     });
