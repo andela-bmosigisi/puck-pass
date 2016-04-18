@@ -19,6 +19,10 @@ app.get('/', function (req, res) {
   res.sendfile(__dirname + '/app/index.html');
 });
 
+app.get('/favicon.ico', function (req, res) {
+  res.sendfile(__dirname + '/app/favicon.ico');
+});
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');

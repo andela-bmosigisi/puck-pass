@@ -20,7 +20,7 @@ module.exports = function(io) {
         addGame(data, socket);
       });
       socket.on('disconnect', function () {
-        console.log('A user disconnected while joining.');
+        console.log('A user disconnected.');
       });
       populateNamespaceArray();
       createNamespaces();
