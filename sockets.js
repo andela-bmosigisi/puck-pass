@@ -187,6 +187,13 @@ module.exports = function(io) {
           '/assets/img/' + (data.team == 'G' ? 'green' : 'blue') + '.png';
         socket.nsp.game.players[socket.client.id].hasPuck = false;
         socket.nsp.game.playersCount++;
+        socket.nsp.game.puck = {
+          destroyed: false,
+          vx: 0,
+          vy: 0,
+          x: 592,
+          y: 312
+        };
         socket.nsp.emit('game state update', {game: socket.nsp.game});
       } else {
         socket.emit('full game prompt', {});
@@ -237,11 +244,17 @@ module.exports = function(io) {
 
     // handle changes in the puck position and availability.
     socket.on('changed puck', function (data) {
+      console.log('puck data', data);
       if (data.destroyed) {
-        socket.nsp.game.puck = { destroyed: true };
+        socket.nsp.game.puck.destroyed = true;
       } else {
         // the puck is there, the position is changing.
-        puck.position = {x: data.x, y: data. y};
+        socket.nsp.game.puck.destroyed = false;
+        socket.nsp.game.puck.x = data.x;
+        socket.nsp.game.puck.y = data.y;
+        socket.nsp.game.puck.vx = data.vx;
+        socket.nsp.game.puck.vy = data.vy;
+        socket.nsp.game.puck.moving = true;
       }
 
       socket.nsp.emit('update live state',

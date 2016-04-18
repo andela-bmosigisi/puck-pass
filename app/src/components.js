@@ -14,11 +14,52 @@
         .bind('Move', function () {
           this.trigger('positionChanged', window.socket);
         });
+
+      this.previousPosition = { x: 0, y: 0};
+
       this.bind('Moved', function (from) {
         if (this.hit('Wall')) {
           this[from.axis] = from.oldValue;
         }
+        // store the previous location, if has puck.
+        if (this.hasPuck) {
+          this.previousPosition[from.axis] = from.oldValue;
+        }
       });
+
+      this.bind('KeyDown', function(e) {
+        if (e.key == Crafty.keys.SPACE && this.hasPuck) {
+          // create puck and send into motion.
+          var xAttr = this._x - this.previousPosition.x;
+          var yAttr = this._y - this.previousPosition.y;
+          // calculate appropriate position for puck creation.
+          game.puck = Crafty.e('Puck').attr({
+            x: 4 * xAttr + this._x,
+            y: 4 * yAttr + this._y
+          });
+          game.puck.vx = 50 * xAttr;
+          game.puck.vy = 50 * yAttr;
+          game.puck.destroyed = false;
+
+          // send out event to signify puck has moved.
+          var puckData = {};
+          puckData.destroyed = game.puck.destroyed;
+          puckData.x = game.puck.x;
+          puckData.y = game.puck.y;
+          puckData.vx = game.puck.vx;
+          puckData.vy = game.puck.vy;
+          puckData.moving = true;
+          socket.emit('changed puck', puckData);
+          this.hasPuck = false;
+          this.imageUrl = '/assets/img/' + (this.team == 'B' ? 'blue': 'green') + '.png';
+          this.image(this.imageUrl);
+          var imageData = { images: {}, puckery: {} };
+          imageData.images[this.playerId] = this.imageUrl;
+          imageData.puckery[this.playerId] = false;
+          socket.emit('changed image', imageData);
+        }
+      });
+
       this.hasPuck = false;
     },
 
@@ -51,7 +92,6 @@
           this.imageUrl = imageUrlA;
           collider.imageUrl = imageUrlB;
         } else if (collider.hasPuck) {
-          console.log('Its the collider that has the puck');
           collider.hasPuck = false;
           var imageUrlA = '/assets/img/' + (this.team == 'B' ? 'blue' : 'green') + '-puck.png';
           var imageUrlB = '/assets/img/' + (collider.team == 'B' ? 'blue': 'green') + '.png';
@@ -100,7 +140,7 @@
 
   Crafty.c('Puck', {
     init: function () {
-      this.addComponent('2D, DOM, Image, Collision')
+      this.addComponent('2D, DOM, Image, Collision, Motion')
         .attr({w: 16, h: 16})
         .image('/assets/img/puck.png');
     }

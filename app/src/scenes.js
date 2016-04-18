@@ -72,6 +72,21 @@
         game.puck.destroy();
         game.puck = {};
         game.puck.destroyed = true;
+      } else if (!puck.destroyed && game.puck.destroyed) {
+        game.puck.destroyed = false;
+        game.puck = Crafty.e('Puck').attr({
+          x: puck.x,
+          y: puck.y
+        });
+        game.puck.vx = puck.vx;
+        game.puck.vy = puck.vy;
+      } else if (!game.puck.destroyed && !puck.moving) {
+        game.puck.attr({
+          x: puck.x,
+          y: puck.y
+        });
+        game.puck.vx = puck.vx;
+        game.puck.vy = puck.vy;
       }
 
       // update scores.
