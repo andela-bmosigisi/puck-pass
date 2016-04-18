@@ -80,9 +80,11 @@
         this.hasPuck = true;
         this.imageUrl = imageUrl;
         var imageData = { images: {}, puckery: {} };
+        var puckData = { destroyed: true};
         imageData.images[this.playerId] = imageUrl;
         imageData.puckery[this.playerId] = true;
         window.socket.emit('changed image', imageData);
+        window.socket.emit('changed puck', puckData);
         game.puck.destroy();
       });
 

@@ -204,6 +204,7 @@ module.exports = function(io) {
         {game: socket.nsp.game});
     });
 
+    // handle change of images on players.
     socket.on('changed image', function (data) {
       for (var key in data.images) {
         if (data.images.hasOwnProperty(key)) {
@@ -228,6 +229,19 @@ module.exports = function(io) {
             socket.nsp.game.players[playerId].hasPuck = false;
           }
         }
+      }
+
+      socket.nsp.emit('update live state',
+        {game: socket.nsp.game});
+    });
+
+    // handle changes in the puck position and availability.
+    socket.on('changed puck', function (data) {
+      if (data.destroyed) {
+        socket.nsp.game.puck = { destroyed: true };
+      } else {
+        // the puck is there, the position is changing.
+        puck.position = {x: data.x, y: data. y};
       }
 
       socket.nsp.emit('update live state',

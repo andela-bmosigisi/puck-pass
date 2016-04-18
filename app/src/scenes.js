@@ -24,6 +24,7 @@
 
       // Initialize the puck.
       game.puck = Crafty.e('Puck').attr({x: 592, y: 312});
+      game.puck.destroyed = false;
     };
 
     // all socket events are emited and handled here.
@@ -65,7 +66,15 @@
         }
       }
 
-      // update puck and scores.
+      // update puck.
+      var puck = gameUpdate.puck;
+      if (puck.destroyed && !game.puck.destroyed) {
+        game.puck.destroy();
+        game.puck = {};
+        game.puck.destroyed = true;
+      }
+
+      // update scores.
     };
   }, function () {
 
