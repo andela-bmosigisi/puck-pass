@@ -260,6 +260,7 @@ module.exports = function(io) {
       socket.nsp.emit('update live state',
         {game: socket.nsp.game});
     });
+
   };
 
   return sockets;

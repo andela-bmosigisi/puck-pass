@@ -4,7 +4,10 @@
     var Game = function () {
       this.puck = {};
       this.players = {};
-      this.scores = {};
+      this.scores = {
+        blue: {},
+        green: {}
+      };
     };
 
     var initializeGame = function () {
@@ -29,6 +32,20 @@
       // Initialize the puck.
       game.puck = Crafty.e('Puck').attr({x: 592, y: 312});
       game.puck.destroyed = false;
+
+      // Create the scoring entities.
+      game.scores.blue.a = Crafty.e('Score')
+        .attr({x: 0, y: 0})
+        .color('#C5FBB3');
+      game.scores.blue.b = Crafty.e('Score')
+        .attr({x: 1140, y: 580})
+        .color('#C5FBB3');
+      game.scores.green.a = Crafty.e('Score')
+        .attr({x: 0, y: 580})
+        .color('#BBEAF8');
+      game.scores.green.b = Crafty.e('Score')
+        .attr({x: 1140, y: 0})
+        .color('#BBEAF8');
     };
 
     // all socket events are emited and handled here.

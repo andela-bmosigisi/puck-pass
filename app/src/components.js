@@ -175,4 +175,35 @@
       });
     }
   });
+
+  Crafty.c('Score', {
+    init: function () {
+      this.addComponent('2D, DOM, Collision, Color')
+        .attr({w: 60, h: 60, z: -1});
+
+      this.onHit('Player', function (collisionData) {
+        var player = collisionData[0].obj;
+        var overlap = collisionData[0].overlap;
+        console.log('Overlap:', overlap);
+        var increment = false;
+        if (player.hasPuck && overlap <= -20) {
+          switch (player.team) {
+            case 'B':
+              if (this.color == 'B') {
+                increment = true;
+              }
+              break;
+            case 'G':
+              if (this.color == 'G') {
+                increment = true;
+              }
+              break;
+          }
+        }
+        if (increment) {
+          window.emit('changed scores', {team: player.team});
+        }
+      });
+    }
+  })
 })()
