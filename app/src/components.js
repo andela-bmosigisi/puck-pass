@@ -176,7 +176,7 @@
     }
   });
 
-  Crafty.c('Score', {
+  Crafty.c('Goal', {
     init: function () {
       this.addComponent('2D, DOM, Collision, Color')
         .attr({w: 60, h: 60, z: -1});
@@ -184,7 +184,6 @@
       this.onHit('Player', function (collisionData) {
         var player = collisionData[0].obj;
         var overlap = collisionData[0].overlap;
-        console.log('Overlap:', overlap);
         var increment = false;
         if (player.hasPuck && overlap <= -20) {
           switch (player.team) {
@@ -201,7 +200,8 @@
           }
         }
         if (increment) {
-          window.emit('changed scores', {team: player.team});
+          console.log('This guy emits man.');
+          socket.emit('changed scores', {team: player.team});
         }
       });
     }

@@ -9,7 +9,10 @@ module.exports = function(io) {
   var GameClass = function () {
     this.puck = {};
     this.players = {};
-    this.scores = {};
+    this.scores = {
+      B: 0,
+      G: 0
+    };
     this.playersCount = 0;
   };
 
@@ -255,6 +258,20 @@ module.exports = function(io) {
         socket.nsp.game.puck.vx = data.vx;
         socket.nsp.game.puck.vy = data.vy;
         socket.nsp.game.puck.moving = true;
+      }
+
+      socket.nsp.emit('update live state',
+        {game: socket.nsp.game});
+    });
+
+    // increment the scores for the players.
+    socket.on('changed scores', function (data) {
+      socket.nsp.game.scores[data.team]++;
+
+      if (socket.nsp.game.scores[data.team] >= 1000) {
+        socket.nsp.emit('game over', {
+          winner: data.team
+        });
       }
 
       socket.nsp.emit('update live state',
