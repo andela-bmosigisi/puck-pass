@@ -17,10 +17,14 @@
       }
 
       // create the walls.
-      Crafty.e('Wall').attr({x: 0, y: -1, w: 1200, h: 1});
-      Crafty.e('Wall').attr({x: -1, y: 0, w: 1, h: 640});
-      Crafty.e('Wall').attr({x: 0, y: 640, w: 1200, h: 1});
-      Crafty.e('Wall').attr({x: 1200, y: 0, w: 1, h: 640});
+      var u = Crafty.e('Wall').attr({x: 0, y: -1, w: 1200, h: 1});
+      u.side = 'u';
+      var l = Crafty.e('Wall').attr({x: -1, y: 0, w: 1, h: 640});
+      l.side = 'l';
+      var d = Crafty.e('Wall').attr({x: 0, y: 640, w: 1200, h: 1});
+      d.side = 'd';
+      var r = Crafty.e('Wall').attr({x: 1200, y: 0, w: 1, h: 640});
+      r.side = 'r';
 
       // Initialize the puck.
       game.puck = Crafty.e('Puck').attr({x: 592, y: 312});

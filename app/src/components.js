@@ -30,15 +30,23 @@
       this.bind('KeyDown', function(e) {
         if (e.key == Crafty.keys.SPACE && this.hasPuck) {
           // create puck and send into motion.
-          var xAttr = this._x - this.previousPosition.x;
-          var yAttr = this._y - this.previousPosition.y;
+          var xAttr = this.x - this.previousPosition.x;
+          xAttr = xAttr == 0 ? 1 : xAttr / Math.abs(xAttr);
+          var yAttr = this.y - this.previousPosition.y;
+          yAttr = yAttr == 0 ? 1 : yAttr / Math.abs(yAttr);
           // calculate appropriate position for puck creation.
+          var x = 30 * xAttr + this._x;
+          var y = 30 * yAttr + this._y;
+          x = x >= 1200 ? x - 25 : x;
+          x = x <= 0 ? x + 25 : x;
+          y = y >= 640 ? y - 25 : y;
+          y = y <= 0 ? y + 25 : y;
           game.puck = Crafty.e('Puck').attr({
-            x: 4 * xAttr + this._x,
-            y: 4 * yAttr + this._y
+            x: x,
+            y: y
           });
-          game.puck.vx = 50 * xAttr;
-          game.puck.vy = 50 * yAttr;
+          game.puck.vx = 250 * xAttr;
+          game.puck.vy = 250 * yAttr;
           game.puck.destroyed = false;
 
           // send out event to signify puck has moved.
@@ -143,6 +151,28 @@
       this.addComponent('2D, DOM, Image, Collision, Motion')
         .attr({w: 16, h: 16})
         .image('/assets/img/puck.png');
+
+      this.onHit('Wall', function (collisionInfo) {
+        var side = collisionInfo[0].obj.side;
+        switch (side) {
+          case 'l':
+            this.vx = this.vx * -1;
+            this.x = this.x + 8;
+            break;
+          case 'r':
+            this.vx = this.vx * -1;
+            this.x = this.x - 8;
+            break;
+          case 'u':
+            this.vy = this.vy * -1;
+            this.y = this.y + 8;
+            break;
+          case 'd':
+            this.vy = this.vy * -1;
+            this.y = this.y - 8;
+            break;
+        }
+      });
     }
   });
 })()
