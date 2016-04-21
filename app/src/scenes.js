@@ -73,7 +73,7 @@
       });
 
       socket.on('game over', function (data) {
-        alert('Game Over, '+ data.winner + ' wins!!');
+
       });
     };
 
@@ -87,24 +87,51 @@
     initializeGame();
     socketEvents();
 
+    var outOfBounds = function (positionObj) {
+      var changed = false;
+      if (positionObj.x <= 0) {
+        positionObj.x = 1;
+        changed = true;
+      } else if (positionObj.x > 1180) {
+        positionObj.x = 1179;
+        changed = true;
+      }
+      if (positionObj.y <= 0) {
+        positionObj.y = 1;
+        changed = false;
+      } else if (positionObj.y > 620) {
+        positionObj.y = 619;
+        changed = false;
+      }
+      return changed;
+    };
+
     // update positions of players on field
     var updateLiveState = function (data) {
       var gameUpdate = data;
       // update players
       for (var key in gameUpdate.players) {
         if (gameUpdate.players.hasOwnProperty(key)) {
+          // check if position is out of bounds, and rectify.
+          var changed = outOfBounds(gameUpdate.players[key].position);
           if (key != me.playerId) {
-            game.players[key].image(gameUpdate.players[key].imageUrl);
-            game.players[key].imageUrl = gameUpdate.players[key].imageUrl;
             game.players[key].attr(gameUpdate.players[key].position);
             game.players[key].hasPuck = gameUpdate.players[key].hasPuck;
+            var ext = game.players[key].hasPuck ? '-puck.png' : '.png';
+            var img = '/assets/img/' +
+              (game.players[key].team == 'G' ? 'green' : 'blue') + ext;
+            game.players[key].image(img);
           } else {
             me.hasPuck = gameUpdate.players[key].hasPuck;
-            me.imageUrl = gameUpdate.players[key].imageUrl;
-            me.image(gameUpdate.players[key].imageUrl);
+            var ext = me.hasPuck ? '-puck.png' : '.png';
+            var img = '/assets/img/' + (me.team == 'G' ? 'green' : 'blue') + ext;
+            me.image(img);
+            if (changed) {
+              me.attr(gameUpdate.players[key].position);
+            }
           }
         }
-      }
+      };
 
       // update puck.
       var puck = gameUpdate.puck;
@@ -113,6 +140,7 @@
         game.puck = {};
         game.puck.destroyed = true;
       } else if (!puck.destroyed && game.puck.destroyed) {
+        // check if puck entity exists, otherwise create it.
         game.puck.destroyed = false;
         game.puck = Crafty.e('Puck').attr({
           x: puck.x,

@@ -216,12 +216,7 @@ module.exports = function(io) {
 
     // handle change of images on players.
     socket.on('changed image', function (data) {
-      for (var key in data.images) {
-        if (data.images.hasOwnProperty(key)) {
-           socket.nsp.game.players[key].imageUrl = data.images[key];
-        }
-      }
-
+      // update who has a puck.
       for (var key in data.puckery) {
         if (data.puckery.hasOwnProperty(key)) {
            socket.nsp.game.players[key].hasPuck = data.puckery[key];
@@ -247,7 +242,6 @@ module.exports = function(io) {
 
     // handle changes in the puck position and availability.
     socket.on('changed puck', function (data) {
-      console.log('puck data', data);
       if (data.destroyed) {
         socket.nsp.game.puck.destroyed = true;
       } else {

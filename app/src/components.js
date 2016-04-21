@@ -59,10 +59,9 @@
           puckData.moving = true;
           socket.emit('changed puck', puckData);
           this.hasPuck = false;
-          this.imageUrl = '/assets/img/' + (this.team == 'B' ? 'blue': 'green') + '.png';
-          this.image(this.imageUrl);
-          var imageData = { images: {}, puckery: {} };
-          imageData.images[this.playerId] = this.imageUrl;
+          var imageUrl = '/assets/img/' + (this.team == 'B' ? 'blue': 'green') + '.png';
+          this.image(imageUrl);
+          var imageData = { puckery: {} };
           imageData.puckery[this.playerId] = false;
           socket.emit('changed image', imageData);
         }
@@ -88,32 +87,24 @@
           this.hasPuck = false;
           var imageUrlA = '/assets/img/' + (this.team == 'B' ? 'blue': 'green') + '.png';
           var imageUrlB = '/assets/img/' + (collider.team == 'B' ? 'blue': 'green') + '-puck.png';
-          var imageData = { images: {}, puckery: {} };
-          imageData.images[this.playerId] = imageUrlA;
-          imageData.images[collider.playerId] = imageUrlB;
+          var imageData = { puckery: {} };
           imageData.puckery[this.playerId] = false;
           imageData.puckery[collider.playerId] = true;
           window.socket.emit('changed image', imageData);
           this.image(imageUrlA);
           collider.image(imageUrlB);
           collider.hasPuck = true;
-          this.imageUrl = imageUrlA;
-          collider.imageUrl = imageUrlB;
         } else if (collider.hasPuck) {
-          collider.hasPuck = false;
           var imageUrlA = '/assets/img/' + (this.team == 'B' ? 'blue' : 'green') + '-puck.png';
           var imageUrlB = '/assets/img/' + (collider.team == 'B' ? 'blue': 'green') + '.png';
-          var imageData = { images: {}, puckery: {} };
-          imageData.images[this.playerId] = imageUrlA;
-          imageData.images[collider.playerId] = imageUrlB;
+          var imageData = { puckery: {} };
           imageData.puckery[this.playerId] = true;
           imageData.puckery[collider.playerId] = false;
           window.socket.emit('changed image', imageData);
+          collider.hasPuck = false;
           this.hasPuck = true;
           this.image(imageUrlA);
-          this.imageUrl = imageUrlA;
           collider.image(imageUrlB);
-          collider.imageUrl = imageUrlB;
         }
       });
 
@@ -126,10 +117,8 @@
         var imageUrl = '/assets/img/' + color + '-puck.png';
         this.image(imageUrl);
         this.hasPuck = true;
-        this.imageUrl = imageUrl;
-        var imageData = { images: {}, puckery: {} };
+        var imageData = { puckery: {} };
         var puckData = { destroyed: true};
-        imageData.images[this.playerId] = imageUrl;
         imageData.puckery[this.playerId] = true;
         window.socket.emit('changed image', imageData);
         window.socket.emit('changed puck', puckData);
@@ -157,19 +146,19 @@
         switch (side) {
           case 'l':
             this.vx = this.vx * -1;
-            this.x = this.x + 8;
+            this.x = this.x + 12;
             break;
           case 'r':
             this.vx = this.vx * -1;
-            this.x = this.x - 8;
+            this.x = this.x - 12;
             break;
           case 'u':
             this.vy = this.vy * -1;
-            this.y = this.y + 8;
+            this.y = this.y + 12;
             break;
           case 'd':
             this.vy = this.vy * -1;
-            this.y = this.y - 8;
+            this.y = this.y - 12;
             break;
         }
       });
@@ -200,7 +189,6 @@
           }
         }
         if (increment) {
-          console.log('This guy emits man.');
           socket.emit('changed scores', {team: player.team});
         }
       });
