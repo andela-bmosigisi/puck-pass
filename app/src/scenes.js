@@ -98,10 +98,10 @@
       }
       if (positionObj.y <= 0) {
         positionObj.y = 1;
-        changed = false;
+        changed = true;
       } else if (positionObj.y > 620) {
         positionObj.y = 619;
-        changed = false;
+        changed = true;
       }
       return changed;
     };
