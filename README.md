@@ -50,10 +50,10 @@ npm start
 - Create a game by giving it a name, in the landing page.
 - After being re-directed to the playing area, decide whether you want to be in the blue or green team. Write your name and click the button to the corresponding team.
 - Invite any other three people to the game. For a server on your computer, that would mean giving them your ip address and name of the game, if the three other people are in the same network. You may get your ip on a Mac/Linux computer by running:
-```ifconfig | grep inet\ ```
+`ifconfig | grep inet`
 - Once three people have joined and chosen teams, the countdown begins.
 - The game is played by chasing around (fighting for) the puck, while collaborating with your team player. The score increases by holding the puck and standing in a goal area with the same colour as your team colour.
-- How to win you ask? Currently the score increases forever.
+- How to win you ask? Currently, the scores increase forever. You may decide on a cap e.g. race to 1000
 
 ## How to contribute
 
@@ -62,6 +62,7 @@ Play it and open issues for bugs you might find.
 ## Future
 
 - Add a victory condition.
+- Improve instructions and UX.
 - Fix bugs.
 - Host the game.
 - Optimize the network operations.
